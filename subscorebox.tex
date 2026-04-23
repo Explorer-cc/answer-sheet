@@ -1,0 +1,58 @@
+\documentclass[fontset=ubuntu]{ctexart}
+\usepackage[showframe,margin=1in]{geometry}
+\usepackage{amsmath,amsfonts}
+\usepackage{enumitem}
+\usepackage{zhlipsum}
+\newcounter{question}%
+\NewDocumentEnvironment{question}{ O +b }{%
+    \refstepcounter{question}%
+    \noindent%
+    \begin{minipage}[t]{1.5cm}%
+    \renewcommand{\arraystretch}{1.25}%
+    \begin{tabular}{|p{1cm}|}%
+        \hline%
+        得\enspace 分\\%
+        \hline\\\hline%
+    \end{tabular}%
+    \end{minipage}%
+    \begin{minipage}[t]{\dimexpr\textwidth-1.5cm\relax}%
+    \setlength{\parindent}{0pt}%
+    \arabic{question}、%
+    \IfNoValueF{#1}{（#1分）}#2%
+    \end{minipage}%
+}%
+{\bigskip}%
+\begin{document}
+\zhlipsum[2]
+
+\noindent
+\begin{minipage}[t]{1.5cm}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{1cm}|}
+    \hline
+    得\enspace 分\\
+    \hline\\\hline
+\end{tabular}%
+\end{minipage}%
+\begin{minipage}[t]{\dimexpr\textwidth-1.5cm\relax}
+\setlength{\parindent}{0pt}
+3、（14分）设$X_1,\ldots,X_n$为来自均匀分布$U(\theta_1,\theta_2)$的i.i.d.样本, 其中$\theta_1<\theta_2$为未知参数.
+\begin{enumerate}[label=(\roman*)]
+    \item 求$(\theta_1+\theta_2)/2$的矩估计.
+    \item 如果$T(X)=(X_{(1)},X_{(n)})$是完备的, 则证明$(X_{(1)}+X_{(n)})/2$是$(\theta_1+\theta_2)/2$的UMVUE.
+\end{enumerate}%
+\end{minipage}%
+\bigskip
+
+\zhlipsum[2]
+\setcounter{question}{3}
+\begin{question}[14]%
+    设$X_1,\ldots,X_n$为来自均匀分布$U(\theta_1,\theta_2)$的i.i.d.样本, 其中$\theta_1<\theta_2$为未知参数.
+    \begin{enumerate}[label=(\roman*)]
+        \item 求$(\theta_1+\theta_2)/2$的矩估计.
+        \item 如果$T(X)=(X_{(1)},X_{(n)})$是完备的, 则证明$(X_{(1)}+X_{(n)})/2$是$(\theta_1+\theta_2)/2$的UMVUE.
+    \end{enumerate}
+\end{question}
+
+\zhlipsum[2]
+\end{document}

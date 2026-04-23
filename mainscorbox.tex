@@ -1,0 +1,103 @@
+\documentclass[fontset=ubuntu]{ctexart}
+\usepackage{zhnumber}
+\usepackage[showframe,margin=1in]{geometry}
+\usepackage{tabularray}
+\UseTblrLibrary{counter}
+\newcounter{questionnum}
+\newcommand*\stepquestionnum{%
+    \stepcounter{questionnum}%
+    \zhnumber{\arabic{questionnum}}%
+}
+\ExplSyntaxOn
+\keys_define:nn { mainscorebox } {
+    question-num .int_set:N = \l_my_question_num,
+    question-str .tl_set:N =\l_my_scorebox_question_str,
+    score-str .tl_set:N = \l_my_scorebox_score_str,
+    totalscore-str .tl_set:N = \l_my_scorebox_totalscore_str,
+    teachername-str .tl_set:N = \l_my_scorebox_teachername_str,
+    firstcolumn-wd .tl_set:N = \l_my_scorebox_firstcolumn_wd,
+    totalscore-wd .tl_set:N = \l_my_scorebox_totalscore_wd,
+    teachername-wd .tl_set:N = \l_my_scorebox_teachername_wd,
+    scorebox-ht .tl_set:N = \l_my_scorebox_scorebox_ht,
+}
+\keys_set:nn { mainscorebox } {%
+    % question-num = 0,
+    question-str = { 题号 },
+    score-str = { 得分 },
+    totalscore-str = { 总分 },
+    teachername-str = { 评卷人签名 },
+    firstcolumn-wd = 1.5cm,
+    totalscore-wd = 1.5cm,
+    teachername-wd = 2cm,
+    scorebox-ht = 1cm,
+}%
+\tl_new:N \tblrbody
+
+\NewDocumentCommand{\mainscorebox}{ O{} m }
+{
+    \group_begin:
+    \setcounter{questionnum}{0}
+    \keys_set:nn { mainscorebox } { #1 }
+    \keys_set:nn { mainscorebox } { question-num = #2 }
+    \tl_clear:N \tblrbody
+    \tl_build_begin:N \tblrbody
+    %第一行
+    \tl_build_put_right:Nn \tblrbody {\l_my_scorebox_question_str}
+    \prg_replicate:nn {\l_my_question_num} {
+        \tl_build_put_right:Nn \tblrbody { & \stepquestionnum }
+    }
+    \tl_build_put_right:Nn \tblrbody { & \l_my_scorebox_totalscore_str}
+    \tl_build_put_right:Nn \tblrbody { & \l_my_scorebox_teachername_str}
+    \tl_build_put_right:Nn \tblrbody {\\}
+    %第二行
+    \tl_build_put_right:Nn \tblrbody {\l_my_scorebox_score_str}
+    \prg_replicate:nn {\l_my_question_num} {%
+        \tl_build_put_right:Nn \tblrbody { & }%
+    }%
+    \prg_replicate:nn {2}{%
+        \tl_build_put_right:Nn \tblrbody { & }
+    }
+    \tl_build_put_right:Nn \tblrbody {\\}
+    \tl_build_end:N \tblrbody
+    \bigskip
+    \noindent
+    \begin{tblr}[%
+        expand=\tblrbody%
+        ]{%
+        hlines,vlines,%
+        width=\textwidth,%
+        stretch=0,%
+        rowspec={*{2}{Q[m,ht=\l_my_scorebox_scorebox_ht]}},
+        colspec={%
+            Q[c,m,wd=\l_my_scorebox_firstcolumn_wd]%
+            *{\l_my_question_num}{X[c,m]}%
+            Q[c,m,wd=\l_my_scorebox_totalscore_wd]%
+            Q[c,m,wd=\l_my_scorebox_teachername_wd]%
+        }%
+    }%
+    \tblrbody%
+    \end{tblr}
+    \par
+    \bigskip    
+    \group_end:
+}
+\ExplSyntaxOff
+
+
+
+
+
+\begin{document}
+
+\mainscorebox{4}
+
+\mainscorebox[%
+    question-str = {题号},
+    score-str = {得分},
+    totalscore-str = {满分},
+    teachername-str = {Osbert Wang},
+    totalscore-wd = 1cm,
+    teachername-wd = 3cm,
+]{12}
+
+\end{document}
