@@ -28,16 +28,27 @@
     \zhnumber{\arabic{questionnum}}%
 }
 \ExplSyntaxOn
+\int_new:N \l__scorebox_question_num_int
+\tl_new:N \l__scorebox_question_str_tl
+\tl_new:N \l__scorebox_score_str_tl
+\tl_new:N \l__scorebox_totalscore_str_tl
+% \tl_new:N \l__scorebox_teachername_str_tl
+\dim_new:N \l__scorebox_firstcolumn_width_dim
+\dim_new:N \l__scorebox_totalscore_width_dim
+% \dim_new:N \l__scorebox_teachername_width_dim
+\dim_new:N \l__scorebox_scorebox_height_dim
+\tl_new:N \l__scorebox_tblr_body_tl
+
 \keys_define:nn { mainscorebox } {
-    question-num .int_set:N = \l_my_question_num,
-    question-str .tl_set:N =\l_my_scorebox_question_str,
-    score-str .tl_set:N = \l_my_scorebox_score_str,
-    totalscore-str .tl_set:N = \l_my_scorebox_totalscore_str,
-    % teachername-str .tl_set:N = \l_my_scorebox_teachername_str,
-    firstcolumn-wd .tl_set:N = \l_my_scorebox_firstcolumn_wd,
-    totalscore-wd .tl_set:N = \l_my_scorebox_totalscore_wd,
-    % teachername-wd .tl_set:N = \l_my_scorebox_teachername_wd,
-    scorebox-ht .tl_set:N = \l_my_scorebox_scorebox_ht,
+    question-num .int_set:N = \l__scorebox_question_num_int,
+    question-str .tl_set:N = \l__scorebox_question_str_tl,
+    score-str .tl_set:N = \l__scorebox_score_str_tl,
+    totalscore-str .tl_set:N = \l__scorebox_totalscore_str_tl,
+    % teachername-str .tl_set:N = \l__scorebox_teachername_str_tl,
+    firstcolumn-wd .dim_set:N = \l__scorebox_firstcolumn_width_dim,
+    totalscore-wd .dim_set:N = \l__scorebox_totalscore_width_dim,
+    % teachername-wd .dim_set:N = \l__scorebox_teachername_width_dim,
+    scorebox-ht .dim_set:N = \l__scorebox_scorebox_height_dim,
 }
 \keys_set:nn { mainscorebox } {%
     % question-num = 0,
@@ -50,51 +61,50 @@
     % teachername-wd = 2cm,
     scorebox-ht = 1cm,
 }%
-\tl_new:N \tblrbody
 
-\NewDocumentCommand{\mainscorebox}{ O{} m }
+\NewDocumentCommand{\scorebox}{ O{} m }
 {
     \group_begin:
     \setcounter{questionnum}{0}
     \keys_set:nn { mainscorebox } { #1 }
     \keys_set:nn { mainscorebox } { question-num = #2 }
-    \tl_clear:N \tblrbody
-    \tl_build_begin:N \tblrbody
+    \tl_clear:N \l__scorebox_tblr_body_tl
+    \tl_build_begin:N \l__scorebox_tblr_body_tl
     %第一行
-    \tl_build_put_right:Nn \tblrbody {\l_my_scorebox_question_str}
-    \prg_replicate:nn {\l_my_question_num} {
-        \tl_build_put_right:Nn \tblrbody { & \stepquestionnum }
+    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_question_str_tl }
+    \prg_replicate:nn { \l__scorebox_question_num_int } {
+        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \stepquestionnum }
     }
-    \tl_build_put_right:Nn \tblrbody { & \l_my_scorebox_totalscore_str}
-    % \tl_build_put_right:Nn \tblrbody { & \l_my_scorebox_teachername_str}
-    \tl_build_put_right:Nn \tblrbody {\\}
+    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_totalscore_str_tl }
+    % \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_teachername_str_tl }
+    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
     %第二行
-    \tl_build_put_right:Nn \tblrbody {\l_my_scorebox_score_str}
-    \prg_replicate:nn {\l_my_question_num} {%
-        \tl_build_put_right:Nn \tblrbody { & }%
+    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_score_str_tl }
+    \prg_replicate:nn { \l__scorebox_question_num_int } {%
+        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }%
     }%
     % \prg_replicate:nn {2}{%
-        \tl_build_put_right:Nn \tblrbody { & }
+        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }
     % }
-    \tl_build_put_right:Nn \tblrbody {\\}
-    \tl_build_end:N \tblrbody
+    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
+    \tl_build_end:N \l__scorebox_tblr_body_tl
     \bigskip
     \noindent\centering
     \begin{tblr}[%
-        expand=\tblrbody%
+        expand=\l__scorebox_tblr_body_tl%
         ]{%
         hlines,vlines,%
         width=.85\linewidth,%
         stretch=0,%
-        rowspec={*{2}{Q[m,ht=\l_my_scorebox_scorebox_ht]}},
+        rowspec={*{2}{Q[m,ht=\l__scorebox_scorebox_height_dim]}},
         colspec={%
-            Q[c,m,wd=\l_my_scorebox_firstcolumn_wd]%
-            *{\l_my_question_num}{X[c,m]}%
-            Q[c,m,wd=\l_my_scorebox_totalscore_wd]%
-            % Q[c,m,wd=\l_my_scorebox_teachername_wd]%
+            Q[c,m,wd=\l__scorebox_firstcolumn_width_dim]%
+            *{\l__scorebox_question_num_int}{X[c,m]}%
+            Q[c,m,wd=\l__scorebox_totalscore_width_dim]%
+            % Q[c,m,wd=\l__scorebox_teachername_width_dim]%
         }%
     }%
-    \tblrbody%
+    \l__scorebox_tblr_body_tl%
     \end{tblr}
     \par
     \bigskip    
@@ -132,7 +142,7 @@
 \medskip
 \endgroup
 
-\mainscorebox{3}
+\scorebox{3}
 
 \Question{选择题}
 
