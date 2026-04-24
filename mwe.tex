@@ -2,6 +2,7 @@
 \usepackage{fouriernc}
 \usepackage[
     a3paper,
+    showframe,
     landscape,
     vmargin=1.25in,
     left=1.75in,
@@ -9,11 +10,26 @@
     ]{geometry}
 \usepackage{zhlipsum}
 \usepackage{tikz,tikzpagenodes}
-\usetikzlibrary{positioning}
+\usepackage{lastpage}
+\usepackage{refcount}
+\usetikzlibrary{calc,positioning}
 \AddToHookNext{shipout/background}{
     \begin{tikzpicture}[overlay,remember picture]
         \draw[thick,dashed] ([xshift=-1.5cm,yshift=-2cm]current page text area.south west) -- ([xshift=-1.5cm,yshift=+2cm]current page text area.north west);
     \node[font=\huge\bfseries,rotate=90] at ([xshift=-3cm]current page text area.west) {姓名\underline{\hspace{3cm}}\quad 班级\underline{\hspace{3cm}}\quad 考场号\underline{\hspace{3cm}}\quad 座位号\underline{\hspace{3cm}}};
+    \end{tikzpicture}
+}
+\newcommand{\leftlogicalpage}{\number\numexpr 2*\value{page}-1\relax}
+\newcommand{\rightlogicalpage}{\number\numexpr 2*\value{page}\relax}
+\newcommand{\logicaltotalpages}{\number\numexpr 2*\getpagerefnumber{LastPage}\relax}
+\AddToHook{shipout/foreground}{
+    \begin{tikzpicture}[overlay,remember picture]
+        \node[font=\normalsize] at
+            ($ (current page text area.south west)!.25!(current page text area.south east) + (0,-.75cm) $)
+            {第\leftlogicalpage 页（共\logicaltotalpages 页）};
+        \node[font=\normalsize] at
+            ($ (current page text area.south west)!.75!(current page text area.south east) + (0,-.75cm) $)
+            {第\rightlogicalpage 页（共\logicaltotalpages 页）};
     \end{tikzpicture}
 }
 
@@ -225,5 +241,8 @@
 
 \Solution
 \hfill\includegraphics[valign=t,page=2]{example-image-duck}
+\newpage
+
+\zhlipsum[name=zhufu]
 
 \end{document}
