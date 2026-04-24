@@ -178,6 +178,9 @@
 
 \newcounter{QuestionCounter}
 \newcommand{\Question}[1]{\refstepcounter{QuestionCounter}\par\bigskip\noindent{\Large\textbf{\zhnum{QuestionCounter}、#1}}~\par\bigskip}
+\newcommand{\Fillin}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}\;\underline{\hspace{3cm}}\qquad}
+\newcommand{\Solution}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}}
+
 \begin{document}
 
 \begingroup
@@ -197,15 +200,12 @@
 \newcounter{FillinCounter}
 \setcounter{FillinCounter}{\value{ChoiceQuestionCount}}
 \Question{填空题}
-\newcommand{\Fillin}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}\;\underline{\hspace{3cm}}\qquad}
 
 \Fillin\Fillin\Fillin
 \par\bigskip
 \Fillin\Fillin
 
 \Question{解答题}
-
-\newcommand{\Solution}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}}
 
 \Solution
 \insertgap{5cm}
