@@ -22,6 +22,7 @@
 \usepackage{tabularray}
 \UseTblrLibrary{counter}
 \newcounter{questionnum}
+\newcounter{ChoiceQuestionCount}
 \newcommand*\stepquestionnum{%
     \stepcounter{questionnum}%
     \zhnumber{\arabic{questionnum}}%
@@ -35,8 +36,15 @@
 \dim_new:N \l__scorebox_totalscore_width_dim
 \dim_new:N \l__scorebox_scorebox_height_dim
 \tl_new:N \l__scorebox_tblr_body_tl
+\int_new:N \l__choicetable_question_count_int
+\tl_new:N \l__choicetable_question_str_tl
+\tl_new:N \l__choicetable_answer_str_tl
+\tl_new:N \l__choicetable_width_tl
+\dim_new:N \l__choicetable_firstcolumn_width_dim
+\dim_new:N \l__choicetable_row_height_dim
+\tl_new:N \l__choicetable_tblr_body_tl
 
-\keys_define:nn { mainscorebox } {
+\keys_define:nn { scorebox } {
     question-num .int_set:N = \l__scorebox_question_num_int,
     question-str .tl_set:N = \l__scorebox_question_str_tl,
     score-str .tl_set:N = \l__scorebox_score_str_tl,
@@ -45,7 +53,7 @@
     totalscore-wd .dim_set:N = \l__scorebox_totalscore_width_dim,
     scorebox-ht .dim_set:N = \l__scorebox_scorebox_height_dim,
 }
-\keys_set:nn { mainscorebox } {%
+\keys_set:nn { scorebox } {%
     question-str = { 题号 },
     score-str = { 得分 },
     totalscore-str = { 总分 },
@@ -58,8 +66,8 @@
 {
     \group_begin:
     \setcounter{questionnum}{0}
-    \keys_set:nn { mainscorebox } { #1 }
-    \keys_set:nn { mainscorebox } { question-num = #2 }
+    \keys_set:nn { scorebox } { #1 }
+    \keys_set:nn { scorebox } { question-num = #2 }
     \tl_clear:N \l__scorebox_tblr_body_tl
     \tl_build_begin:N \l__scorebox_tblr_body_tl
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_question_str_tl }
@@ -96,6 +104,60 @@
     \bigskip    
     \group_end:
 }
+
+\keys_define:nn { choicetable } {
+    question-count .int_set:N = \l__choicetable_question_count_int,
+    question-num .int_set:N = \l__choicetable_question_count_int,
+    question-str .tl_set:N = \l__choicetable_question_str_tl,
+    answer-str .tl_set:N = \l__choicetable_answer_str_tl,
+    width .tl_set:N = \l__choicetable_width_tl,
+    firstcolumn-wd .dim_set:N = \l__choicetable_firstcolumn_width_dim,
+    row-ht .dim_set:N = \l__choicetable_row_height_dim,
+}
+\keys_set:nn { choicetable } {
+    question-count = 0,
+    question-str = { 题号 },
+    answer-str = { 答案 },
+    width = .9\linewidth,
+    firstcolumn-wd = 2cm,
+    row-ht = 1cm,
+}
+
+\NewDocumentCommand{\choicetable}{ O{} m }
+{
+    \setcounter{ChoiceQuestionCount}{#2}
+    \group_begin:
+    \keys_set:nn { choicetable } { #1 }
+    \keys_set:nn { choicetable } { question-count = #2 }
+    \tl_clear:N \l__choicetable_tblr_body_tl
+    \tl_build_begin:N \l__choicetable_tblr_body_tl
+    \tl_build_put_right:Nn \l__choicetable_tblr_body_tl { \l__choicetable_question_str_tl }
+    \int_step_inline:nn { \l__choicetable_question_count_int } {
+        \tl_build_put_right:Nn \l__choicetable_tblr_body_tl { & ##1 }
+    }
+    \tl_build_put_right:Nn \l__choicetable_tblr_body_tl {\\}
+    \tl_build_put_right:Nn \l__choicetable_tblr_body_tl { \l__choicetable_answer_str_tl }
+    \int_step_inline:nn { \l__choicetable_question_count_int } {
+        \tl_build_put_right:Nn \l__choicetable_tblr_body_tl { & }
+    }
+    \tl_build_put_right:Nn \l__choicetable_tblr_body_tl {\\}
+    \tl_build_end:N \l__choicetable_tblr_body_tl
+    \begin{tblr}[
+        expand=\l__choicetable_tblr_body_tl
+        ]{
+        width=\l__choicetable_width_tl,
+        colspec={
+            Q[c,m,wd=\l__choicetable_firstcolumn_width_dim]
+            *{\l__choicetable_question_count_int}{X[c,m]}
+        },
+        hlines,vlines,
+        rows={ht=\l__choicetable_row_height_dim},
+        stretch=0,
+    }
+    \l__choicetable_tblr_body_tl
+    \end{tblr}
+    \group_end:
+}
 \ExplSyntaxOff
 
 \usepackage[export]{adjustbox}
@@ -130,23 +192,10 @@
 
 \Question{选择题}
 
-\def\NN{8}
-\begin{tblr}{
-        width=.9\linewidth,
-        colspec={
-            Q[c,m,2cm]
-            *{\NN}{X[c,m]}
-        },
-        hlines,vlines,
-        rows={ht=1cm},
-        stretch=0,
-    }
-    题号 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 \\
-    答案 &   &  &  &  &  &  &  &   \\
-\end{tblr}
+\choicetable{8}
 
 \newcounter{FillinCounter}
-\addtocounter{FillinCounter}{\NN}
+\setcounter{FillinCounter}{\value{ChoiceQuestionCount}}
 \Question{填空题}
 \newcommand{\Fillin}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}\;\underline{\hspace{3cm}}\qquad}
 
@@ -159,20 +208,20 @@
 \newcommand{\Solution}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}}
 
 \Solution
-\insertgap{3.5cm}
+\insertgap{5cm}
 
 \Solution
 \newpage
 
 \Solution
 \hfill\includegraphics[valign=t,width=3cm]{example-image-duck}
-\insertgap{2cm} % 图占据了一定的高度...
+\insertgap{5cm}
 
 \Solution
-\insertgap{4cm}
+\insertgap{5cm}
 
 \Solution
-\insertgap{4cm}
+\insertgap{5cm}
 
 \Solution
 \hfill\includegraphics[valign=t,page=2]{example-image-duck}
