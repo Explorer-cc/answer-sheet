@@ -22,70 +22,45 @@
 \usepackage{zhnumber}
 \usepackage{tabularray}
 \UseTblrLibrary{counter}
-\newcounter{questionnum}
-\newcommand*\stepquestionnum{%
-    \stepcounter{questionnum}%
-    \zhnumber{\arabic{questionnum}}%
-}
 \ExplSyntaxOn
-\int_new:N \l__scorebox_question_num_int
+\int_new:N \l__scorebox_question_count_int
 \tl_new:N \l__scorebox_question_str_tl
-\tl_new:N \l__scorebox_score_str_tl
 \tl_new:N \l__scorebox_totalscore_str_tl
-% \tl_new:N \l__scorebox_teachername_str_tl
 \dim_new:N \l__scorebox_firstcolumn_width_dim
 \dim_new:N \l__scorebox_totalscore_width_dim
-% \dim_new:N \l__scorebox_teachername_width_dim
 \dim_new:N \l__scorebox_scorebox_height_dim
 \tl_new:N \l__scorebox_tblr_body_tl
 
-\keys_define:nn { mainscorebox } {
-    question-num .int_set:N = \l__scorebox_question_num_int,
+\keys_define:nn { scorebox } {
+    question-count .int_set:N = \l__scorebox_question_count_int,
+    question-num .int_set:N = \l__scorebox_question_count_int,
     question-str .tl_set:N = \l__scorebox_question_str_tl,
-    score-str .tl_set:N = \l__scorebox_score_str_tl,
     totalscore-str .tl_set:N = \l__scorebox_totalscore_str_tl,
-    % teachername-str .tl_set:N = \l__scorebox_teachername_str_tl,
     firstcolumn-wd .dim_set:N = \l__scorebox_firstcolumn_width_dim,
     totalscore-wd .dim_set:N = \l__scorebox_totalscore_width_dim,
-    % teachername-wd .dim_set:N = \l__scorebox_teachername_width_dim,
     scorebox-ht .dim_set:N = \l__scorebox_scorebox_height_dim,
 }
-\keys_set:nn { mainscorebox } {%
-    % question-num = 0,
+\keys_set:nn { scorebox } {%
+    question-count = 0,
     question-str = { 题号 },
-    score-str = { 得分 },
     totalscore-str = { 总分 },
-    % teachername-str = { 评卷人签名 },
     firstcolumn-wd = 3cm,
     totalscore-wd = 3cm,
-    % teachername-wd = 2cm,
     scorebox-ht = 1cm,
 }%
 
 \NewDocumentCommand{\scorebox}{ O{} m }
 {
     \group_begin:
-    \setcounter{questionnum}{0}
-    \keys_set:nn { mainscorebox } { #1 }
-    \keys_set:nn { mainscorebox } { question-num = #2 }
+    \keys_set:nn { scorebox } { #1 }
+    \keys_set:nn { scorebox } { question-count = #2 }
     \tl_clear:N \l__scorebox_tblr_body_tl
     \tl_build_begin:N \l__scorebox_tblr_body_tl
-    %第一行
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_question_str_tl }
-    \prg_replicate:nn { \l__scorebox_question_num_int } {
-        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \stepquestionnum }
+    \int_step_inline:nn { \l__scorebox_question_count_int } {
+        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \zhnumber { ##1 } }
     }
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_totalscore_str_tl }
-    % \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_teachername_str_tl }
-    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
-    %第二行
-    \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_score_str_tl }
-    \prg_replicate:nn { \l__scorebox_question_num_int } {%
-        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }%
-    }%
-    % \prg_replicate:nn {2}{%
-        \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }
-    % }
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
     \tl_build_end:N \l__scorebox_tblr_body_tl
     \bigskip
@@ -96,12 +71,11 @@
         hlines,vlines,%
         width=.85\linewidth,%
         stretch=0,%
-        rowspec={*{2}{Q[m,ht=\l__scorebox_scorebox_height_dim]}},
+        rows={m,ht=\l__scorebox_scorebox_height_dim},
         colspec={%
             Q[c,m,wd=\l__scorebox_firstcolumn_width_dim]%
-            *{\l__scorebox_question_num_int}{X[c,m]}%
+            *{\l__scorebox_question_count_int}{X[c,m]}%
             Q[c,m,wd=\l__scorebox_totalscore_width_dim]%
-            % Q[c,m,wd=\l__scorebox_teachername_width_dim]%
         }%
     }%
     \l__scorebox_tblr_body_tl%
