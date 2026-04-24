@@ -2,7 +2,6 @@
 \usepackage{fouriernc}
 \usepackage[
     a3paper,
-    % showframe,
     landscape,
     vmargin=1.25in,
     left=1.75in,
@@ -32,10 +31,8 @@
 \tl_new:N \l__scorebox_question_str_tl
 \tl_new:N \l__scorebox_score_str_tl
 \tl_new:N \l__scorebox_totalscore_str_tl
-% \tl_new:N \l__scorebox_teachername_str_tl
 \dim_new:N \l__scorebox_firstcolumn_width_dim
 \dim_new:N \l__scorebox_totalscore_width_dim
-% \dim_new:N \l__scorebox_teachername_width_dim
 \dim_new:N \l__scorebox_scorebox_height_dim
 \tl_new:N \l__scorebox_tblr_body_tl
 
@@ -44,21 +41,16 @@
     question-str .tl_set:N = \l__scorebox_question_str_tl,
     score-str .tl_set:N = \l__scorebox_score_str_tl,
     totalscore-str .tl_set:N = \l__scorebox_totalscore_str_tl,
-    % teachername-str .tl_set:N = \l__scorebox_teachername_str_tl,
     firstcolumn-wd .dim_set:N = \l__scorebox_firstcolumn_width_dim,
     totalscore-wd .dim_set:N = \l__scorebox_totalscore_width_dim,
-    % teachername-wd .dim_set:N = \l__scorebox_teachername_width_dim,
     scorebox-ht .dim_set:N = \l__scorebox_scorebox_height_dim,
 }
 \keys_set:nn { mainscorebox } {%
-    % question-num = 0,
     question-str = { 题号 },
     score-str = { 得分 },
     totalscore-str = { 总分 },
-    % teachername-str = { 评卷人签名 },
     firstcolumn-wd = 3cm,
     totalscore-wd = 3cm,
-    % teachername-wd = 2cm,
     scorebox-ht = 1cm,
 }%
 
@@ -70,22 +62,17 @@
     \keys_set:nn { mainscorebox } { question-num = #2 }
     \tl_clear:N \l__scorebox_tblr_body_tl
     \tl_build_begin:N \l__scorebox_tblr_body_tl
-    %第一行
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_question_str_tl }
     \prg_replicate:nn { \l__scorebox_question_num_int } {
         \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \stepquestionnum }
     }
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_totalscore_str_tl }
-    % \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & \l__scorebox_teachername_str_tl }
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
-    %第二行
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { \l__scorebox_score_str_tl }
     \prg_replicate:nn { \l__scorebox_question_num_int } {%
         \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }%
     }%
-    % \prg_replicate:nn {2}{%
         \tl_build_put_right:Nn \l__scorebox_tblr_body_tl { & }
-    % }
     \tl_build_put_right:Nn \l__scorebox_tblr_body_tl {\\}
     \tl_build_end:N \l__scorebox_tblr_body_tl
     \bigskip
@@ -101,7 +88,6 @@
             Q[c,m,wd=\l__scorebox_firstcolumn_width_dim]%
             *{\l__scorebox_question_num_int}{X[c,m]}%
             Q[c,m,wd=\l__scorebox_totalscore_width_dim]%
-            % Q[c,m,wd=\l__scorebox_teachername_width_dim]%
         }%
     }%
     \l__scorebox_tblr_body_tl%
@@ -112,7 +98,6 @@
 }
 \ExplSyntaxOff
 
-%
 \usepackage[export]{adjustbox}
 % https://tex.stackexchange.com/a/601262/322482
 \newlength{\gapinsert}
@@ -128,7 +113,6 @@
     \vspace{#1}% Insert regular vspace
   \fi
 }
-%
 
 \newcounter{QuestionCounter}
 \newcommand{\Question}[1]{\refstepcounter{QuestionCounter}\par\bigskip\noindent{\Large\textbf{\zhnum{QuestionCounter}、#1}}~\par\bigskip}
@@ -172,15 +156,12 @@
 
 \Question{解答题}
 
-% 懒得改名字了...
-
 \newcommand{\Solution}{\refstepcounter{FillinCounter}\makebox[1cm][r]{\arabic{FillinCounter}.}}
 
 \Solution
 \insertgap{3.5cm}
 
 \Solution
-% \insertgap{3cm}
 \newpage
 
 \Solution
@@ -195,7 +176,5 @@
 
 \Solution
 \hfill\includegraphics[valign=t,page=2]{example-image-duck}
-
-% \zhlipsum[1-15]
 
 \end{document}
