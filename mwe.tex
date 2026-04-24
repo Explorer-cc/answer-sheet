@@ -34,10 +34,10 @@
 \AddToHook{shipout/foreground}{
     \begin{tikzpicture}[overlay,remember picture]
         \node[font=\normalsize] at
-            ($ (current page text area.south west)!.25!(current page text area.south east) + (0,-.75cm) $)
+            ($ (current page text area.south west)!.25!(current page text area.south east) + (0,-1.25cm) $)
             {第\leftlogicalpage 页（共\logicaltotalpages 页）};
         \node[font=\normalsize] at
-            ($ (current page text area.south west)!.75!(current page text area.south east) + (0,-.75cm) $)
+            ($ (current page text area.south west)!.75!(current page text area.south east) + (0,-1.25cm) $)
             {第\rightlogicalpage 页（共\logicaltotalpages 页）};
     \end{tikzpicture}
 }

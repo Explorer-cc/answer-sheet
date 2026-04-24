@@ -2,58 +2,57 @@
 
 ## Project Structure & Module Organization
 
-This repository contains LaTeX sources for Chinese answer-sheet and score-box layouts. Primary source files live at the repository root:
+This repository is a LaTeX/CTeX answer-sheet project. Core files are kept at the repository root:
 
-- `mainscorbox.tex`: main score-box implementation/demo source.
-- `subscorebox.tex`: sub-score-box source.
-- `mainscorboxdemo.tex` and `mwe.tex`: example documents for visual checks.
-- `*.png` and `example-image.jpg`: reference and demo assets.
-- `*.pdf`: generated output examples.
+- `mwe.tex`: current integrated answer-sheet example and active development target.
+- `mainscorbox.tex` and `subscorebox.tex`: standalone score-box sources.
+- `*.pdf`: generated visual outputs for inspection.
+- `*.png` and `example-image.jpg`: reference/demo image assets.
+- `LICENSE` and `.gitignore`: project metadata and ignored LaTeX auxiliaries.
 
-There is currently no separate `src/` or `tests/` directory. Keep new reusable LaTeX macros in dedicated `.tex` files and keep generated auxiliaries out of version control.
+There is no `src/` or `tests/` directory. Keep reusable LaTeX code in clearly named `.tex` files, and avoid scattering new macros through the document body when they belong in the preamble.
 
 ## Build, Test, and Development Commands
 
-Use a LaTeX distribution with CTeX support, `tabularray`, TikZ, and `latexmk`.
+Use a TeX Live installation with CTeX, TikZ, `tabularray`, and `latexmk`.
 
 ```powershell
 latexmk -pdf -interaction=nonstopmode mwe.tex
 ```
 
-Builds the full minimal working example and is the preferred smoke test.
+Builds the main example for visual inspection.
 
 ```powershell
 latexmk -pdf -interaction=nonstopmode mainscorbox.tex
-latexmk -pdf -interaction=nonstopmode mainscorboxdemo.tex
 latexmk -pdf -interaction=nonstopmode subscorebox.tex
 ```
 
-Builds individual documents when editing a specific component.
+Builds standalone score-box sources.
 
 ```powershell
 latexmk -C
 ```
 
-Removes common generated files. The `.gitignore` already excludes LaTeX auxiliaries such as `*.aux`, `*.log`, `*.fdb_latexmk`, `*.fls`, and `*.synctex.gz`.
+Cleans generated LaTeX auxiliaries. Do not commit `.aux`, `.log`, `.fls`, `.fdb_latexmk`, or `.synctex.gz` files.
 
 ## Coding Style & Naming Conventions
 
-Use 4-space indentation inside LaTeX command bodies and align key-value option blocks for readability. Prefer descriptive macro and key names, matching existing patterns such as `\mainscorebox`, `question-num`, `scorebox-ht`, and `totalscore-str`.
+Use 4-space indentation inside macro bodies and align key-value blocks for readability. For LaTeX3 code, use module-scoped internal names such as `\l__scorebox_..._tl`, `\l__scorebox_..._int`, and `\l__scorebox_..._dim`.
 
-This project uses LaTeX3-style internals in places (`\ExplSyntaxOn`, `\keys_define:nn`, token lists). Keep internal variables consistently prefixed and scoped, and avoid introducing global state unless required.
+Keep public commands concise and semantic, for example `\scorebox` and `\choicetable`. Prefer key-value options for configurable dimensions, labels, and counts.
 
 ## Testing Guidelines
 
-There is no automated test suite. Treat successful PDF generation as the baseline test. After changes, compile the most relevant demo plus `mwe.tex`, then inspect the PDF for table alignment, Chinese text rendering, page geometry, and score-box dimensions.
+There is no automated test suite. Treat successful PDF generation plus visual inspection as the baseline test. Check table alignment, Chinese font rendering, page geometry, seal-line placement, and logical page footers.
 
-Name new examples clearly, for example `feature-demo.tex` or `layout-mwe.tex`, and keep them small enough to diagnose rendering regressions.
+Do not run `latexmk -pdflua` unless the user explicitly permits it in the current turn.
 
 ## Commit & Pull Request Guidelines
 
-The current Git history uses Conventional Commit style, for example `feat: initial commit`. Continue using short imperative subjects such as `fix: adjust score box width` or `docs: add contributor guide`.
+Recent history uses short imperative or Conventional Commit-style messages, such as `feat: initial commit` and `adjust command sequence`. Keep subjects concise and specific.
 
-Pull requests should include a concise description, the files changed, the build command used, and screenshots or PDFs when visual output changes. Link related issues when available and mention any required fonts or LaTeX packages.
+Pull requests should describe the visual/layout change, list edited source files, mention the build command used, and include updated PDFs or screenshots when output changes.
 
 ## Agent-Specific Instructions
 
-Do not commit generated auxiliary files. Before editing, check whether a file is source (`.tex`, images, documentation) or generated output (`.aux`, `.log`, `.fls`, `.fdb_latexmk`). Preserve Chinese labels and typography unless the task explicitly asks for copy or font changes.
+Before editing, inspect current worktree state and avoid reverting unrelated user changes. Preserve Chinese labels, typography, and layout unless asked otherwise. Prefer static checks when the user has restricted compilation.
