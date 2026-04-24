@@ -1,22 +1,31 @@
-\documentclass[fontset=fandol,twocolumn,twoside]{ctexart}
-\usepackage{fouriernc}
+\documentclass[
+    twocolumn,twoside,
+    fontset=ubuntu,
+    ]{ctexart}
+\usepackage{libertine}
 \usepackage[
     a3paper,
-    showframe,
+    % showframe,
     landscape,
     vmargin=1.25in,
     left=1.75in,
     right=1.25in,
     ]{geometry}
+\setlength{\columnsep}{1cm}
 \usepackage{zhlipsum}
 \usepackage{tikz,tikzpagenodes}
 \usepackage{lastpage}
 \usepackage{refcount}
 \usetikzlibrary{calc,positioning}
-\AddToHookNext{shipout/background}{
+\AddToHook{shipout/background}{
     \begin{tikzpicture}[overlay,remember picture]
-        \draw[thick,dashed] ([xshift=-1.5cm,yshift=-2cm]current page text area.south west) -- ([xshift=-1.5cm,yshift=+2cm]current page text area.north west);
-    \node[font=\huge\bfseries,rotate=90] at ([xshift=-3cm]current page text area.west) {姓名\underline{\hspace{3cm}}\quad 班级\underline{\hspace{3cm}}\quad 考场号\underline{\hspace{3cm}}\quad 座位号\underline{\hspace{3cm}}};
+        \ifodd\value{page}
+            \draw[thick,dashed] ([xshift=-1.5cm,yshift=-2cm]current page text area.south west) -- ([xshift=-1.5cm,yshift=+2cm]current page text area.north west);
+            \node[font=\Large\heiti,rotate=90] at ([xshift=-3cm]current page text area.west) {姓名\underline{\hspace{3cm}}\quad 班级\underline{\hspace{3cm}}\quad 考场号\underline{\hspace{3cm}}\quad 座位号\underline{\hspace{3cm}}};
+        \else
+            \draw[thick,dashed] ([xshift=1.5cm,yshift=-2cm]current page text area.south east) -- ([xshift=1.5cm,yshift=+2cm]current page text area.north east);
+            \node[font=\Large\bfseries\heiti,rotate=-90] at ([xshift=2.5cm]current page text area.east) {密\qquad 封\qquad 线\qquad 内\qquad 禁\qquad 止\qquad 答\qquad 题};
+        \fi
     \end{tikzpicture}
 }
 \newcommand{\leftlogicalpage}{\number\numexpr 2*\value{page}-1\relax}
@@ -243,6 +252,6 @@
 \hfill\includegraphics[valign=t,page=2]{example-image-duck}
 \newpage
 
-\zhlipsum[name=zhufu]
+\zhlipsum[1-20]
 
 \end{document}
